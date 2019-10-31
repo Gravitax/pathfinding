@@ -30,8 +30,8 @@ static void     pathfinding(t_pf *data)
     {
         if (!(data->renderer = SDL_CreateRenderer(data->pWindow, -1, 0)))
             clean_exit(data, "sdl renderer error", 0);
-        data->mw = 16;
-        data->mh = 16;
+        data->mw = 32;
+        data->mh = 32;
         data->mlen = data->mw * data->mh;
         get_nodes(data);
         data->start = &data->list[0];

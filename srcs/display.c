@@ -78,6 +78,7 @@ void            display(t_pf *data)
         for (int y = 0; y < data->mh; y++)
             connection(data, x + y * data->mw);
     blocks(data);
+    int i = 0;
     if (data->end != NULL)
     {
         SDL_SetRenderDrawColor(data->renderer, 255, 100, 100, 100);
@@ -89,8 +90,11 @@ void            display(t_pf *data)
                 tmp->y * data->nsizey + data->nsizey / 2,
                 tmp->parent->x * data->nsizex + data->nsizex / 2,
                 tmp->parent->y * data->nsizey + data->nsizey / 2);
-          tmp = tmp->parent;
+            i = tmp->i;
+            tmp = tmp->parent;
         }
+        data->start = &data->list[i];
+        SDL_Delay(100);
     }
     SDL_SetRenderDrawColor(data->renderer, 0, 0, 0, 100);
 }

@@ -52,7 +52,10 @@ void            lst_pushback(t_lst *list, t_node *node)
         while (list->next)
             list = list->next;
         if (!(list->next = (t_lst *)ft_memalloc(sizeof(t_lst))))
+        {
             lst_free(head);
+            return ;
+        }
         list->next->node = node;
     }
     list = head;
