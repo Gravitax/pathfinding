@@ -14,30 +14,15 @@
 
 static void     connection(t_pf *data, int i)
 {
-    if (data->list[i].ngbhr[0].i > 0)
-        SDL_RenderDrawLine(data->renderer,
-            data->list[i].x * data->nsizex + data->nsizex / 2,
-            data->list[i].y * data->nsizey + data->nsizey / 2,
-            data->list[i].ngbhr[0].x * data->nsizex + data->nsizex / 2,
-            data->list[i].ngbhr[0].y * data->nsizey + data->nsizey / 2);
-    if (data->list[i].ngbhr[1].i > 0)
-        SDL_RenderDrawLine(data->renderer,
-            data->list[i].x * data->nsizex + data->nsizex / 2,
-            data->list[i].y * data->nsizey + data->nsizey / 2,
-            data->list[i].ngbhr[1].x * data->nsizex + data->nsizex / 2,
-            data->list[i].ngbhr[1].y * data->nsizey + data->nsizey / 2);
-    if (data->list[i].ngbhr[2].i > 0)
-        SDL_RenderDrawLine(data->renderer,
-            data->list[i].x * data->nsizex + data->nsizex / 2,
-            data->list[i].y * data->nsizey + data->nsizey / 2,
-            data->list[i].ngbhr[2].x * data->nsizex + data->nsizex / 2,
-            data->list[i].ngbhr[2].y * data->nsizey + data->nsizey / 2);
-    if (data->list[i].ngbhr[3].i > 0)
-        SDL_RenderDrawLine(data->renderer,
-            data->list[i].x * data->nsizex + data->nsizex / 2,
-            data->list[i].y * data->nsizey + data->nsizey / 2,
-            data->list[i].ngbhr[3].x * data->nsizex + data->nsizex / 2,
-            data->list[i].ngbhr[3].y * data->nsizey + data->nsizey / 2);
+    for (int k = 0; k < 4; k++)
+    {
+        if (data->list[i].ngbhr[k] && data->list[i].ngbhr[k]->i > 0)
+            SDL_RenderDrawLine(data->renderer,
+                data->list[i].x * data->nsizex + data->nsizex / 2,
+                data->list[i].y * data->nsizey + data->nsizey / 2,
+                data->list[i].ngbhr[k]->x * data->nsizex + data->nsizex / 2,
+                data->list[i].ngbhr[k]->y * data->nsizey + data->nsizey / 2);
+    }
 }
 
 static void     blocks(t_pf *data)
@@ -92,9 +77,11 @@ void            display(t_pf *data)
                 tmp->parent->y * data->nsizey + data->nsizey / 2);
             i = tmp->i;
             tmp = tmp->parent;
+            if (tmp == data->start)
+                break ;
         }
-        data->start = &data->list[i];
         SDL_Delay(100);
+        data->start = &data->list[i];
     }
     SDL_SetRenderDrawColor(data->renderer, 0, 0, 0, 100);
 }

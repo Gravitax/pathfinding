@@ -17,8 +17,7 @@ void            clean_exit(t_pf *data, char *str, int token)
     if (data)
     {
         ft_memdel((void **)&data->list);
-        if (lst_len(data->alst))
-            lst_free(data->alst);
+        free_dynarray(&data->d_astar);
         if (data->sdl_on)
         {
             if (data->pWindow)

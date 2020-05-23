@@ -33,18 +33,23 @@ OBJDIR	=	./obj
 SRC		=	astar.c \
 			display.c \
 			event.c \
-			list.c \
 			main.c \
 			nodes.c \
-			tools.c
-INC		=	pathfinding.h
+			tools.c \
+			dynarray_insert.c \
+			dynarray_mem.c \
+			dynarray_stack.c \
+			dynarray.c
+
+INC		=	pathfinding.h \
+			dynarray.h
 
 OBJ		=	$(addprefix $(OBJDIR)/,$(SRC:.c=.o))
 HEADER	=	$(addprefix $(INCDIR)/,$(INC))
 
 # compiler
 CC		=	gcc
-CFLAGS	=	-Wall -Wextra -Werror -g
+CFLAGS	=	-Wall -Wextra -Werror
 SDL		=	-lSDL2-2.0
 
 # libft

@@ -23,19 +23,26 @@ static void     init_sdl(t_pf *data)
 		W_WIDTH, W_HEIGHT, 0);
 }
 
+static void     init_data(t_pf *data)
+{
+    if (!(data->renderer = SDL_CreateRenderer(data->pWindow, -1, 0)))
+        clean_exit(data, "sdl renderer error", 0);
+    data->mw = 10;
+    data->mh = 10;
+    data->mlen = data->mw * data->mh;
+    get_nodes(data);
+    data->start = &data->list[0];
+    data->end = &data->list[data->mw * data->mh - 1];
+    if (init_dynarray(&data->d_astar, sizeof(t_node), 1))
+        exit (0);
+}
+
 static void     pathfinding(t_pf *data)
 {
     init_sdl(data);
     if (data->pWindow)
     {
-        if (!(data->renderer = SDL_CreateRenderer(data->pWindow, -1, 0)))
-            clean_exit(data, "sdl renderer error", 0);
-        data->mw = 32;
-        data->mh = 32;
-        data->mlen = data->mw * data->mh;
-        get_nodes(data);
-        data->start = &data->list[0];
-        data->end = &data->list[data->mw * data->mh - 1];
+        init_data(data);
         for (;;)
         {
             SDL_RenderClear(data->renderer);

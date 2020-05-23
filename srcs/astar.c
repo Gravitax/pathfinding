@@ -12,6 +12,43 @@
 
 #include "../includes/pathfinding.h"
 
+static void     sort_dynarray(t_dynarray *arr)
+{
+	int	    i;
+	int	    j;
+    int     size;
+    t_node  *d1;
+    t_node  *d2;
+
+    size = arr->nb_cells;
+	i = -1;
+	while (++i < size - 1)
+	{
+		j = -1;
+		while (++j < size - 1)
+		{
+            d1 = dyacc(arr, j);
+            d2 = dyacc(arr, j + 1);
+			if (d1->globalgoal > d2->globalgoal)
+                dynnaray_swap_cells(arr, j, j + 1);
+		}
+	}
+}
+
+static void     delvisited_nodes(t_pf *data)
+{
+    int     i;
+    t_node  *d;
+
+    i = -1;
+    while (++i < data->d_astar.nb_cells)
+    {
+        d = dyacc(&data->d_astar, i);
+        if (d->bvisited)
+            extract_dynarray(&data->d_astar, i);
+    }
+}
+
 static float    distance(t_node a, t_node b)
 {
     return (ft_sqrt((a.x - b.x) * (a.x - b.x)
@@ -26,80 +63,69 @@ static void     resetdata(t_pf *data)
     while (++i < data->mlen)
     {
         data->list[i].bvisited = 0;
-        data->list[i].globalgoal = 2147483647;
-        data->list[i].localgoal = 2147483647;
+        data->list[i].globalgoal = INFINITY;
+        data->list[i].localgoal = INFINITY;
         data->list[i].parent = NULL;
     }
+    clear_dynarray(&data->d_astar);
 }
 
-static void     neighbour(t_pf *data, t_node *current, int i)
+static void     stock_neighbour(t_pf *data, t_node *ngbhr)
+{
+    int     i;
+    t_node  *d;
+
+    i = -1;
+    while (++i < data->d_astar.nb_cells)
+    {
+        d = dyacc(&data->d_astar, i);
+        if (d->i == ngbhr->i)
+            return ;
+    }
+    push_dynarray(&data->d_astar, ngbhr, 0);
+}
+
+static void     neighbour(t_pf *data, t_node **current, int i)
 {
     float   plowergoal;
     t_node  *ngbhr;
 
-    ngbhr = &data->list[current->ngbhr[i].i];
-    if (ngbhr->bvisited == 0 && ngbhr->bobstacle == 0)
-        lst_pushback(data->alst, ngbhr);
-    plowergoal = current->localgoal + distance(*current, *ngbhr);
+    ngbhr = (*current)->ngbhr[i];
+    if (ngbhr == NULL)
+        return ;
+    plowergoal = (*current)->localgoal + distance(**current, *ngbhr);
     if (plowergoal < ngbhr->localgoal)
     {
-        ngbhr->parent = current;
+        ngbhr->parent = &data->list[(*current)->i];
         ngbhr->localgoal = plowergoal;
         ngbhr->globalgoal = ngbhr->localgoal + distance(*ngbhr, *data->end);
     }
-}
-
-static void     delvisited_nodes(t_pf *data)
-{    
-    t_lst   *tmp;
-    t_lst   *head;
-
-    if (data->alst == NULL)
-        return ;
-    head = data->alst;
-    while (data->alst && data->alst->node->bvisited == 1)
-    {
-        tmp = data->alst->next;
-        ft_memdel((void **)&data->alst);
-        data->alst = tmp;
-        head = data->alst;
-    }
-    while (data->alst)
-    {
-        tmp = data->alst;
-        data->alst = data->alst->next;
-        while (data->alst && data->alst->node->bvisited == 1)
-        {
-            tmp->next = data->alst->next;
-            ft_memdel((void **)&data->alst);
-            data->alst = tmp->next;
-        }
-    }
-    data->alst = head;
+    if (ngbhr->bvisited == 0 && ngbhr->bobstacle == 0)
+        stock_neighbour(data, ngbhr);
+    *current = data->d_astar.c;
 }
 
 void            solve_astar(t_pf *data)
 {
+    int     i;
     t_node  *current;
 
     resetdata(data);
-    current = data->start;
+    push_dynarray(&data->d_astar, data->start, 0);
+    current = data->d_astar.c;
     current->localgoal = 0;
     current->globalgoal = distance(*data->start, *data->end);
-    if (!(data->alst = (t_lst *)ft_memalloc(sizeof(t_lst))))
-        clean_exit(data, "malloc error: astar.c", 0);
-    data->alst->node = data->start;
-    while (current != data->end)
+    while (current->i != data->end->i)
     {
-        lst_sort(data->alst);
+        sort_dynarray(&data->d_astar);
         delvisited_nodes(data);
-        if (!lst_len(data->alst))
+        if (data->d_astar.nb_cells < 1)
             break ;
-        current = data->alst->node;
+        current = data->d_astar.c;
         current->bvisited = 1;
-        neighbour(data, current, 0);
-        neighbour(data, current, 1);
-        neighbour(data, current, 2);
-        neighbour(data, current, 3);
+        data->list[current->i].bvisited = 1;
+        i = -1;
+        while (++i < 4)
+            neighbour(data, &current, i);
     }
 }
