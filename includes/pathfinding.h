@@ -41,12 +41,6 @@ typedef struct  s_node
     struct s_node   *parent;
 }               t_node;
 
-typedef struct  s_lst
-{
-    t_node          *node;
-    struct s_lst    *next;
-}               t_lst;
-
 typedef struct  s_pf
 {
     int             mw;
@@ -64,7 +58,6 @@ typedef struct  s_pf
     t_node          *start;
     t_node          *end;
     t_node          *list;
-    t_lst           *alst;
     SDL_Event       event;
     SDL_Renderer    *renderer;
     SDL_Window	    *pWindow;
@@ -77,10 +70,5 @@ void            event(t_pf *data);
 void            get_list(t_pf *data);
 void            get_nodes(t_pf *data);
 void            solve_astar(t_pf *data);
-
-void            lst_free(t_lst **list);
-int             lst_len(t_lst *list);
-void            lst_pushback(t_lst *list, t_node *node);
-void            lst_sort(t_lst *list);
 
 #endif
