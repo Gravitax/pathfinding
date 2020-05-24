@@ -29,10 +29,9 @@ static void     init_data(t_pf *data)
         clean_exit(data, "sdl renderer error", 0);
     data->mw = 10;
     data->mh = 10;
-    data->mlen = data->mw * data->mh;
     get_nodes(data);
-    data->start = &data->list[0];
-    data->end = &data->list[data->mw * data->mh - 1];
+    data->start = &data->list[0][0];
+    data->end = &data->list[data->mw - 1][data->mh - 1];
     if (init_dynarray(&data->d_astar, sizeof(t_node), 1))
         exit (0);
 }
@@ -47,7 +46,7 @@ static void     pathfinding(t_pf *data)
         {
             SDL_RenderClear(data->renderer);
             event(data);
-            solve_astar(data);
+            astar(data);
             display(data);
             SDL_RenderPresent(data->renderer);
         }

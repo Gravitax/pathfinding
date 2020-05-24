@@ -40,19 +40,16 @@ static void     mouse_event(t_pf *data)
         {
             if (data->ctoken)
             {
-                data->end = &data->list[data->snode.y * data->mw
-                    + data->snode.x];
+                data->end = &data->list[data->snode.x][data->snode.y];
             }
             else if (data->stoken)
             {
-                data->start = &data->list[data->snode.y * data->mw
-                    + data->snode.x];
+                data->start = &data->list[data->snode.x][data->snode.y];
             }
             else
             {
-                data->list[data->snode.y * data->mw
-                + data->snode.x].bobstacle = !data->list[data->snode.y
-                * data->mw + data->snode.x].bobstacle;
+                data->list[data->snode.x][data->snode.y].bobstacle
+                    = !data->list[data->snode.x][data->snode.y].bobstacle;
             }
         }
     }

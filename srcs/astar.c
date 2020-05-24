@@ -57,15 +57,20 @@ static float    distance(t_node a, t_node b)
 
 static void     resetdata(t_pf *data)
 {
-    int i;
+    int x;
+    int y;
 
-    i = -1;
-    while (++i < data->mlen)
+    x = -1;
+    while (++x < data->mw)
     {
-        data->list[i].bvisited = 0;
-        data->list[i].globalgoal = INFINITY;
-        data->list[i].localgoal = INFINITY;
-        data->list[i].parent = NULL;
+        y = -1;
+        while (++y < data->mh)
+        {
+            data->list[x][y].bvisited = 0;
+            data->list[x][y].globalgoal = INFINITY;
+            data->list[x][y].localgoal = INFINITY;
+            data->list[x][y].parent = NULL;
+        }
     }
     clear_dynarray(&data->d_astar);
 }
@@ -79,7 +84,8 @@ static void     stock_neighbour(t_pf *data, t_node *ngbhr)
     while (++i < data->d_astar.nb_cells)
     {
         d = dyacc(&data->d_astar, i);
-        if (d->i == ngbhr->i)
+        if (d->x == ngbhr->x
+            && d->y == ngbhr->y)
             return ;
     }
     push_dynarray(&data->d_astar, ngbhr, 0);
@@ -96,7 +102,7 @@ static void     neighbour(t_pf *data, t_node **current, int i)
     plowergoal = (*current)->localgoal + distance(**current, *ngbhr);
     if (plowergoal < ngbhr->localgoal)
     {
-        ngbhr->parent = &data->list[(*current)->i];
+        ngbhr->parent = &data->list[(*current)->x][(*current)->y];
         ngbhr->localgoal = plowergoal;
         ngbhr->globalgoal = ngbhr->localgoal + distance(*ngbhr, *data->end);
     }
@@ -105,7 +111,14 @@ static void     neighbour(t_pf *data, t_node **current, int i)
     *current = data->d_astar.c;
 }
 
-void            solve_astar(t_pf *data)
+static int      exit_astar(t_pf *data, t_node *current)
+{
+    return ((current->x == data->end->x
+        && current->y == data->end->y)
+        || data->d_astar.nb_cells < 1);
+}
+
+void            astar(t_pf *data)
 {
     int     i;
     t_node  *current;
@@ -115,15 +128,15 @@ void            solve_astar(t_pf *data)
     current = data->d_astar.c;
     current->localgoal = 0;
     current->globalgoal = distance(*data->start, *data->end);
-    while (current->i != data->end->i)
+    while (1)
     {
         sort_dynarray(&data->d_astar);
         delvisited_nodes(data);
-        if (data->d_astar.nb_cells < 1)
-            break ;
         current = data->d_astar.c;
         current->bvisited = 1;
-        data->list[current->i].bvisited = 1;
+        if (exit_astar(data, current))
+            break ;
+        data->list[current->x][current->y].bvisited = 1;
         i = -1;
         while (++i < 4)
             neighbour(data, &current, i);

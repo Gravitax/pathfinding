@@ -12,44 +12,46 @@
 
 #include "../includes/pathfinding.h"
 
-static void     get_neighbourdata(t_pf *data, int x, int y, int pos)
+static void     get_neighbourdata(t_pf *data, int x, int y)
 {
-    t_node  *nodes;
+    t_node  **nodes;
 
     nodes = data->list;
-	nodes[pos].ngbhr[0] = NULL;
-	nodes[pos].ngbhr[1] = NULL;
-	nodes[pos].ngbhr[2] = NULL;
-	nodes[pos].ngbhr[3] = NULL;
+	nodes[x][y].ngbhr[0] = NULL;
+	nodes[x][y].ngbhr[1] = NULL;
+	nodes[x][y].ngbhr[2] = NULL;
+	nodes[x][y].ngbhr[3] = NULL;
     if (y > 0)
-        nodes[pos].ngbhr[0] = &nodes[(y - 1) * data->mw + x];
+        nodes[x][y].ngbhr[0] = &nodes[x][y - 1];
     if (y < data->mh - 1)
-        nodes[pos].ngbhr[1] = &nodes[(y + 1) * data->mw + x];
+        nodes[x][y].ngbhr[1] = &nodes[x][y + 1];
     if (x > 0)
-        nodes[pos].ngbhr[2] = &nodes[y * data->mw + (x - 1)];
+        nodes[x][y].ngbhr[2] = &nodes[x - 1][y];
     if (x < data->mw - 1)
-        nodes[pos].ngbhr[3] = &nodes[y * data->mw + (x + 1)];
+        nodes[x][y].ngbhr[3] = &nodes[x + 1][y];
 }
 
 void            get_nodes(t_pf *data)
 {
     int     x;
     int     y;
-    int     pos;
 
-    if (!(data->list = (t_node *)ft_memalloc(sizeof(t_node) * (data->mlen))))
+    if (!(data->list = (t_node **)ft_memalloc(sizeof(t_node *) * (data->mw))))
         clean_exit(data, "malloc error", 0);
+    for (int i = 0; i < data->mw; i++)
+    {
+        if (!(data->list[i] = ft_memalloc(sizeof(t_node) * data->mh)))
+            clean_exit(data, "malloc error", 0);
+    }
     x = -1;
     while (++x < data->mw)
     {
         y = -1;
         while (++y < data->mh)
         {
-            pos = y * data->mw + x;
-            data->list[pos].i = pos;
-            data->list[pos].x = x;
-            data->list[pos].y = y;
-            get_neighbourdata(data, x, y, pos);
+            data->list[x][y].x = x;
+            data->list[x][y].y = y;
+            get_neighbourdata(data, x, y);
         }
     }
 }

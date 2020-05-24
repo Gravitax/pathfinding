@@ -23,7 +23,6 @@
 
 typedef struct  s_point
 {
-    int         i;
     int         x;
     int         y;
 }               t_point;
@@ -32,7 +31,6 @@ typedef struct  s_node
 {
     int             bobstacle;
     int             bvisited;
-    int             i;
     int             x;
     int             y;
     float           globalgoal;
@@ -45,7 +43,6 @@ typedef struct  s_pf
 {
     int             mw;
     int             mh;
-    int             mlen;
     int             nborder;
     int             nsizex;
     int             nsizey;
@@ -57,7 +54,7 @@ typedef struct  s_pf
     t_point         snode;
     t_node          *start;
     t_node          *end;
-    t_node          *list;
+    t_node          **list;
     SDL_Event       event;
     SDL_Renderer    *renderer;
     SDL_Window	    *pWindow;
@@ -67,8 +64,7 @@ void            clean_exit(t_pf *data, char *str, int token);
 void            display(t_pf *data);
 void            event(t_pf *data);
 
-void            get_list(t_pf *data);
 void            get_nodes(t_pf *data);
-void            solve_astar(t_pf *data);
+void            astar(t_pf *data);
 
 #endif
