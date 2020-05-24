@@ -134,9 +134,9 @@ void            astar(t_pf *data)
         delvisited_nodes(data);
         current = data->d_astar.c;
         current->bvisited = 1;
-        if (exit_astar(data, current))
-            break ;
         data->list[current->x][current->y].bvisited = 1;
+        if (exit_astar(data, current))
+            return ;
         i = -1;
         while (++i < 4)
             neighbour(data, &current, i);

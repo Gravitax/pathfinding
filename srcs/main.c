@@ -15,7 +15,7 @@
 static void     init_sdl(t_pf *data)
 {
     if (SDL_Init(SDL_INIT_VIDEO) == -1) 
-        clean_exit(data, "sdl init error", 0);
+        clean_exit(data, "SDL_Init error", 0);
     data->sdl_on = 1;
     data->pWindow = SDL_CreateWindow("maboye pathfinding",
 		SDL_WINDOWPOS_UNDEFINED,
@@ -26,14 +26,14 @@ static void     init_sdl(t_pf *data)
 static void     init_data(t_pf *data)
 {
     if (!(data->renderer = SDL_CreateRenderer(data->pWindow, -1, 0)))
-        clean_exit(data, "sdl renderer error", 0);
+        clean_exit(data, "SDL_CreateRenderer error", 0);
     data->mw = 10;
     data->mh = 10;
     get_nodes(data);
     data->start = &data->list[0][0];
     data->end = &data->list[data->mw - 1][data->mh - 1];
     if (init_dynarray(&data->d_astar, sizeof(t_node), 1))
-        exit (0);
+        clean_exit(data, "init_dynarray error", 0);
 }
 
 static void     pathfinding(t_pf *data)
