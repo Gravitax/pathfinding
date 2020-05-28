@@ -20,6 +20,7 @@
 
 # define    W_WIDTH     800
 # define    W_HEIGHT    600
+# define    NEIGHBOURG  4
 
 typedef struct  s_point
 {
@@ -35,7 +36,7 @@ typedef struct  s_node
     int             y;
     float           globalgoal;
     float           localgoal;
-    struct s_node   *ngbhr[4];
+    struct s_node   *ngbhr[NEIGHBOURG];
     struct s_node   *parent;
 }               t_node;
 

@@ -14,13 +14,13 @@
 
 static void     get_neighbourdata(t_pf *data, int x, int y)
 {
+    int     i;
     t_node  **nodes;
 
     nodes = data->list;
-	nodes[x][y].ngbhr[0] = NULL;
-	nodes[x][y].ngbhr[1] = NULL;
-	nodes[x][y].ngbhr[2] = NULL;
-	nodes[x][y].ngbhr[3] = NULL;
+    i = -1;
+    while (++i < NEIGHBOURG)
+        nodes[x][y].ngbhr[i] = NULL;
     if (y > 0)
         nodes[x][y].ngbhr[0] = &nodes[x][y - 1];
     if (y < data->mh - 1)

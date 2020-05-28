@@ -74,7 +74,7 @@ void            display(t_pf *data)
     {
         SDL_SetRenderDrawColor(data->renderer, 255, 100, 100, 100);
         t_node  *tmp = data->end;
-        while (tmp && tmp->parent)
+        while (tmp != data->start)
         {
             SDL_RenderDrawLine(data->renderer,
                 tmp->x * data->nsizex + data->nsizex / 2,
@@ -84,8 +84,6 @@ void            display(t_pf *data)
             x = tmp->x;
             y = tmp->y;
             tmp = tmp->parent;
-            if (!tmp || tmp == data->start)
-                break ;
         }
         SDL_Delay(200);
         data->start = &data->list[x][y];

@@ -12,20 +12,51 @@
 
 #include "../includes/pathfinding.h"
 
-static void     sort_dynarray(t_dynarray *arr)
+void            quick_sort(t_dynarray *data, int left, int right)
+{
+    int     left_index;
+    int     right_index;
+    float   pivot;
+
+    left_index = left;
+    right_index = right;
+    pivot = ((t_node *)dyacc(data, (left + right) / 2))->globalgoal;
+    while (left_index <= right_index)
+    {
+        while (((t_node *)dyacc(data, left_index))->globalgoal < pivot)
+            ++left_index;
+        while (((t_node *)dyacc(data, right_index))->globalgoal > pivot)
+            --right_index;
+        if (left_index <= right_index)
+        {
+            dynnaray_swap_cells(data, left_index, right_index);
+            ++left_index;
+            --right_index;
+        }
+    }
+    if (right_index > left)
+        quick_sort(data, left, right_index);
+    if (left_index < right)
+        quick_sort(data, left_index, right);
+}
+
+void            astar_sort_dynarray(t_dynarray *arr)
+{
+    quick_sort(arr, 0, arr->nb_cells - 1);
+}
+/*
+void     bubble_sort(t_dynarray *arr)
 {
 	int	    i;
 	int	    j;
-    int     size;
     t_node  *d1;
     t_node  *d2;
 
-    size = arr->nb_cells;
 	i = -1;
-	while (++i < size - 1)
+	while (++i < arr->nb_cells - 1)
 	{
 		j = -1;
-		while (++j < size - 1)
+		while (++j < arr->nb_cells - 1)
 		{
             d1 = dyacc(arr, j);
             d2 = dyacc(arr, j + 1);
@@ -34,18 +65,24 @@ static void     sort_dynarray(t_dynarray *arr)
 		}
 	}
 }
+*/
+static void     sort_dynarray(t_dynarray *arr)
+{
+    //bubble_sort(arr);
+    astar_sort_dynarray(arr);
+}
 
-static void     delvisited_nodes(t_pf *data)
+static void     delvisited_nodes(t_dynarray *arr)
 {
     int     i;
     t_node  *d;
 
     i = -1;
-    while (++i < data->d_astar.nb_cells)
+    while (++i < arr->nb_cells)
     {
-        d = dyacc(&data->d_astar, i);
+        d = dyacc(arr, i);
         if (d->bvisited)
-            extract_dynarray(&data->d_astar, i);
+            extract_dynarray(arr, i);
     }
 }
 
@@ -118,9 +155,25 @@ static int      exit_astar(t_pf *data, t_node *current)
         || data->d_astar.nb_cells < 1);
 }
 
+static int      solve_astar(t_pf *data, t_node *current)
+{
+    int i;
+
+    sort_dynarray(&data->d_astar);
+    delvisited_nodes(&data->d_astar);
+    current = data->d_astar.c;
+    current->bvisited = 1;
+    data->list[current->x][current->y].bvisited = 1;
+    if (exit_astar(data, current))
+        return (1);
+    i = -1;
+    while (++i < NEIGHBOURG)
+        neighbour(data, &current, i);
+    return (0);
+}
+
 void            astar(t_pf *data)
 {
-    int     i;
     t_node  *current;
 
     resetdata(data);
@@ -128,17 +181,6 @@ void            astar(t_pf *data)
     current = data->d_astar.c;
     current->localgoal = 0;
     current->globalgoal = distance(*data->start, *data->end);
-    while (1)
-    {
-        sort_dynarray(&data->d_astar);
-        delvisited_nodes(data);
-        current = data->d_astar.c;
-        current->bvisited = 1;
-        data->list[current->x][current->y].bvisited = 1;
-        if (exit_astar(data, current))
-            return ;
-        i = -1;
-        while (++i < 4)
-            neighbour(data, &current, i);
-    }
+    while (solve_astar(data, current) == 0)
+        ;
 }
