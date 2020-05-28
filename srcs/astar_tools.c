@@ -51,8 +51,6 @@ void            bubble_sort(t_dynarray *arr)
 {
 	int	    i;
 	int	    j;
-    t_node  *d1;
-    t_node  *d2;
 
 	i = -1;
 	while (++i < arr->nb_cells - 1)
@@ -60,10 +58,11 @@ void            bubble_sort(t_dynarray *arr)
 		j = -1;
 		while (++j < arr->nb_cells - 1)
 		{
-            d1 = dyacc(arr, j);
-            d2 = dyacc(arr, j + 1);
-			if (d1->globalgoal > d2->globalgoal)
+			if (((t_node *)dyacc(arr, j))->globalgoal
+                > ((t_node *)dyacc(arr, j + 1))->globalgoal)
+            {
                 dynnaray_swap_cells(arr, j, j + 1);
+            }
 		}
 	}
 }
