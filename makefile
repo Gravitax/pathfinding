@@ -31,6 +31,7 @@ OBJDIR	=	./obj
 
 # src / obj files
 SRC		=	astar.c \
+			astar_tools.c \
 			display.c \
 			event.c \
 			main.c \
@@ -49,7 +50,7 @@ HEADER	=	$(addprefix $(INCDIR)/,$(INC))
 
 # compiler
 CC		=	gcc
-CFLAGS	=	-Wall -Wextra -Werror -g3 -fsanitize=address
+CFLAGS	=	-Wall -Wextra -Werror #-g3 -fsanitize=address
 SDL		=	-lSDL2-2.0
 
 # libft

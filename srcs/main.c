@@ -27,13 +27,14 @@ static void     init_data(t_pf *data)
 {
     if (!(data->renderer = SDL_CreateRenderer(data->pWindow, -1, 0)))
         clean_exit(data, "SDL_CreateRenderer error", 0);
-    data->mw = 10;
-    data->mh = 10;
+    data->mw = 42;
+    data->mh = 42;
     get_nodes(data);
     data->start = &data->list[0][0];
     data->end = &data->list[data->mw - 1][data->mh - 1];
     if (init_dynarray(&data->d_astar, sizeof(t_node), 1))
         clean_exit(data, "init_dynarray error", 0);
+    data->time = clock();
 }
 
 static void     pathfinding(t_pf *data)
@@ -54,11 +55,18 @@ static void     pathfinding(t_pf *data)
     clean_exit(data, NULL, 1);
 }
 
+static int      check_neighbourg()
+{
+    return (NEIGHBOURG == 4
+        || NEIGHBOURG == 6
+        || NEIGHBOURG == 8);
+}
+
 int             main(int ac, char **av)
 {
     t_pf    data;
 
-    if (ac == 1 && av[1] == NULL)
+    if (ac == 1 && av[1] == NULL && check_neighbourg())
     {
         ft_memset(&data, 0, sizeof(t_pf));
         pathfinding(&data);

@@ -12,6 +12,24 @@
 
 #include "../includes/pathfinding.h"
 
+static void     more_ngbhr(t_pf *data, int x, int y)
+{
+    t_node  **nodes;
+
+    nodes = data->list;
+    if (y > 0 && x > 0)
+        nodes[x][y].ngbhr[4] = &nodes[x - 1][y - 1];
+    if (x < data->mw - 1 && y < data->mh - 1)
+        nodes[x][y].ngbhr[5] = &nodes[x + 1][y + 1];
+    if (NEIGHBOURG > 6)
+    {
+        if (x < data->mw - 1 && y > 0)
+            nodes[x][y].ngbhr[6] = &nodes[x + 1][y - 1];
+        if (x > 0 && y < data->mh - 1)
+            nodes[x][y].ngbhr[7] = &nodes[x - 1][y + 1];
+    }
+}
+
 static void     get_neighbourdata(t_pf *data, int x, int y)
 {
     int     i;
@@ -29,6 +47,23 @@ static void     get_neighbourdata(t_pf *data, int x, int y)
         nodes[x][y].ngbhr[2] = &nodes[x - 1][y];
     if (x < data->mw - 1)
         nodes[x][y].ngbhr[3] = &nodes[x + 1][y];
+    if (NEIGHBOURG > 4)
+        more_ngbhr(data, x, y);
+}
+
+static int      init_nodes(t_pf *data)
+{
+    int i;
+
+    if (!(data->list = (t_node **)ft_memalloc(sizeof(t_node *) * (data->mw))))
+        return (-1);
+    i = -1;
+    while (++i < data->mw)
+    {
+        if (!(data->list[i] = ft_memalloc(sizeof(t_node) * data->mh)))
+            return (-1);
+    }
+    return (0);
 }
 
 void            get_nodes(t_pf *data)
@@ -36,13 +71,8 @@ void            get_nodes(t_pf *data)
     int     x;
     int     y;
 
-    if (!(data->list = (t_node **)ft_memalloc(sizeof(t_node *) * (data->mw))))
-        clean_exit(data, "malloc error", 0);
-    for (int i = 0; i < data->mw; i++)
-    {
-        if (!(data->list[i] = ft_memalloc(sizeof(t_node) * data->mh)))
-            clean_exit(data, "malloc error", 0);
-    }
+    if (init_nodes(data))
+        clean_exit(data, "error init_nodes", 0);
     x = -1;
     while (++x < data->mw)
     {

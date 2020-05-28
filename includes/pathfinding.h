@@ -13,6 +13,7 @@
 #ifndef PATHFINDING_H
 # define PATHFINDING_H
 
+# include <time.h>
 # include <SDL2/SDL.h>
 
 # include "dynarray.h"
@@ -50,6 +51,7 @@ typedef struct  s_pf
     int             ctoken;
     int             stoken;
     int             sdl_on;
+    clock_t         time;
     t_dynarray      d_astar;
     t_point         mouse;
     t_point         snode;
@@ -67,5 +69,10 @@ void            event(t_pf *data);
 
 void            get_nodes(t_pf *data);
 void            astar(t_pf *data);
+
+void            sort_dynarray(t_dynarray *arr);
+void            resetdata(t_pf *data);
+float           distance(t_node a, t_node b);
+void            delvisited_nodes(t_dynarray *arr);
 
 #endif
