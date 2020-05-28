@@ -14,10 +14,11 @@
 
 int             place_pivot(t_dynarray *array, int low, int high)
 {
-	int     pivot = low;
+	int     pivot;
 	int     switch_i;
 	int     i;
 
+    pivot = low;
     i = low + 1;
     switch_i = low + 1;
 	while (i <= high)
@@ -46,70 +47,6 @@ void            quicksort(t_dynarray *array, int low, int high)
 	quicksort(array, pivot + 1, high);
 }
 
-int             partition(t_dynarray *array, int low, int high, int pivot)
-{
-	int     cur;
-    t_node  *d1;
-    t_node  *d2;
-    
-    cur = low;
-    dynnaray_swap_cells(array, pivot, high);
-	while (low <= high)
-    {
-        d1 = dyacc(array, low);
-        d2 = dyacc(array, high);
-		if(d1->globalgoal < d2->globalgoal)
-        {
-            dynnaray_swap_cells(array, low, cur);
-			++cur;
-		}
-		++low;
-	}
-    dynnaray_swap_cells(array, cur, high);
-	return (cur);
-}
-
-void            qsortLH(t_dynarray *array, int low, int high)
-{
-	int pivot;
-	
-    if (low < high)
-    {
-        pivot = low;
-		pivot = partition(array, low, high, pivot);
-		qsortLH(array, low, pivot - 1);
-		qsortLH(array, pivot + 1, high);
-	}
-}
-
-void            quick_sort(t_dynarray *data, int left, int right)
-{
-    int     left_index;
-    int     right_index;
-    float   pivot;
-
-    left_index = left;
-    right_index = right;
-    pivot = ((t_node *)dyacc(data, (left + right) / 2))->globalgoal;
-    while (left_index <= right_index)
-    {
-        while (((t_node *)dyacc(data, left_index))->globalgoal < pivot)
-            ++left_index;
-        while (((t_node *)dyacc(data, right_index))->globalgoal > pivot)
-            --right_index;
-        if (left_index <= right_index)
-        {
-            dynnaray_swap_cells(data, left_index, right_index);
-            ++left_index;
-            --right_index;
-        }
-    }
-    if (right_index > left)
-        quick_sort(data, left, right_index);
-    if (left_index < right)
-        quick_sort(data, left_index, right);
-}
-
 void            bubble_sort(t_dynarray *arr)
 {
 	int	    i;
@@ -133,9 +70,7 @@ void            bubble_sort(t_dynarray *arr)
 
 void            sort_dynarray(t_dynarray *arr)
 {
-    //bubble_sort(arr); // good
-    //quick_sort(arr, 0, arr->nb_cells - 1);
-    //qsortLH(arr, 0, arr->nb_cells - 1);
+    //bubble_sort(arr);
     quicksort(arr, 0, arr->nb_cells - 1);
 }
 
